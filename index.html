@@ -1,316 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Auto Box · Mercado automotivo inteligente</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    /* (mesmo CSS do seu esboço anterior - manter igual) */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0B0D10; font-family: 'Inter', sans-serif; color: #EFF1F3; }
-    .app { max-width: 1280px; margin: 0 auto; padding: 0 1rem 1rem; }
-    .logo-area { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 0 0.5rem; flex-wrap: wrap; }
-    .logo { display: flex; align-items: center; gap: 10px; }
-    .logo i { font-size: 2rem; color: #F5A623; }
-    .logo h1 { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 30%, #F5A623 80%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .badge-city { background: #14171C; border-radius: 40px; padding: 0.4rem 1rem; border: 1px solid #2A2F38; font-size: 0.8rem; }
-    .badge-city i { margin-right: 0.4rem; color: #F5A623; }
-    .nav-tabs { display: flex; gap: 0.5rem; margin: 1.5rem 0 1.8rem; border-bottom: 1px solid #2A2F38; padding-bottom: 0.75rem; flex-wrap: wrap; }
-    .tab-btn { background: transparent; border: none; padding: 0.7rem 1.2rem; font-weight: 600; border-radius: 40px; color: #A0A8B5; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
-    .tab-btn.active { background: #F5A623; color: #0A0C10; box-shadow: 0 4px 12px rgba(245, 166, 35, 0.2); }
-    .tab-btn:hover:not(.active) { background: #14171C; color: #F0F2F5; }
-    .section { display: none; animation: fade 0.25s ease; }
-    .section.active-section { display: block; }
-    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    .card { background: #1B1F26; border-radius: 24px; padding: 1.2rem; border: 1px solid #2A2F38; margin-bottom: 1rem; }
-    .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.2rem; }
-    .filter-bar { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.5rem; align-items: center; }
-    .search-input { background: #14171C; border: 1px solid #2A2F38; border-radius: 60px; padding: 0.7rem 1rem; color: white; flex: 1; }
-    .chip { background: #14171C; border-radius: 40px; padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 500; cursor: pointer; border: 1px solid #2A2F38; }
-    .chip.active-chip { background: #F5A623; color: #0A0C10; }
-    .btn-whatsapp { background: #2BAA6E; border: none; border-radius: 30px; padding: 8px 14px; color: white; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-outline { background: transparent; border: 1px solid #F5A623; border-radius: 30px; padding: 6px 14px; color: #F5A623; cursor: pointer; }
-    .btn-primary { background: #F5A623; border: none; border-radius: 40px; padding: 10px 20px; font-weight: 700; color: #0A0C10; cursor: pointer; }
-    .preco-destaque { color: #F5A623; font-weight: 700; font-size: 1.1rem; }
-    .form-group { margin-bottom: 1rem; }
-    input, textarea, select { background: #14171C; border: 1px solid #2A2F38; border-radius: 20px; padding: 0.7rem 1rem; color: white; width: 100%; }
-    label { font-size: 0.8rem; color: #A0A8B5; margin-bottom: 0.2rem; display: block; }
-    hr { border-color: #2A2F38; margin: 0.8rem 0; }
-    @media (max-width: 680px) { .tab-btn span { display: none; } .tab-btn i { font-size: 1.3rem; } .logo h1 { font-size: 1.4rem; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Box - Teste Funcional</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #0B0D10; color: #EFF1F3; }
+        .card { background: #1B1F26; border-radius: 16px; padding: 15px; margin-bottom: 10px; border-left: 4px solid #F5A623; }
+        .container { max-width: 800px; margin: auto; }
+        .error { color: #ff8888; background: #330000; padding: 10px; border-radius: 8px; }
+        hr { margin: 20px 0; }
+    </style>
 </head>
 <body>
-<div class="app">
-  <div class="logo-area">
-    <div class="logo"><i class="fas fa-car-battery"></i><h1>Auto Box</h1></div>
-    <div class="badge-city"><i class="fas fa-map-marker-alt"></i> João Pessoa · PB</div>
-  </div>
-  <div class="nav-tabs">
-    <button class="tab-btn active" data-tab="directory"><i class="fas fa-store"></i><span> Diretório</span></button>
-    <button class="tab-btn" data-tab="comparator"><i class="fas fa-chart-simple"></i><span> Comparador</span></button>
-    <button class="tab-btn" data-tab="quotations"><i class="fas fa-file-invoice-dollar"></i><span> Cotações</span></button>
-    <button class="tab-btn" data-tab="partner"><i class="fas fa-id-card"></i><span> Área Parceiro</span></button>
-  </div>
-
-  <!-- Diretório -->
-  <div id="directorySection" class="section active-section">
-    <div class="filter-bar">
-      <input type="text" id="dirSearch" placeholder="Buscar por nome ou especialidade..." class="search-input">
-      <div class="chip-group" id="dirTypeFilter">
-        <div class="chip active-chip" data-type="all">Todos</div>
-        <div class="chip" data-type="Oficina">🔧 Oficinas</div>
-        <div class="chip" data-type="Autopeças">🔩 Autopeças</div>
-        <div class="chip" data-type="Sucata">♻️ Sucatas</div>
-      </div>
-    </div>
-    <div id="directoryList" class="grid-cards"></div>
-  </div>
-
-  <!-- Comparador -->
-  <div id="comparatorSection" class="section">
-    <div class="filter-bar">
-      <input type="text" id="compSearch" placeholder="Ex: pastilha, amortecedor..." class="search-input">
-      <div class="chip-group">
-        <div class="chip active-chip" data-condition="all">Todos</div>
-        <div class="chip" data-condition="Nova">✨ Novas</div>
-        <div class="chip" data-condition="Usada">🔄 Usada/Seminova</div>
-      </div>
-    </div>
-    <div id="comparatorList" class="grid-cards"></div>
-  </div>
-
-  <!-- Cotações -->
-  <div id="quotationsSection" class="section">
-    <div class="card">
-      <h3><i class="fas fa-plus-circle"></i> Solicitar novo orçamento</h3>
-      <div class="form-group"><label>Seu nome</label><input type="text" id="quoteName" placeholder="Ex: Carlos Silva"></div>
-      <div class="form-group"><label>WhatsApp (com DDD)</label><input type="text" id="quotePhone" placeholder="83 99999-8888"></div>
-      <div class="form-group"><label>Modelo do carro</label><input type="text" id="quoteCar" placeholder="Ex: Onix 1.4 2015"></div>
-      <div class="form-group"><label>Peça / Serviço</label><textarea rows="2" id="quoteDesc" placeholder="Descreva com detalhes..."></textarea></div>
-      <button class="btn-primary" id="createQuoteBtn"><i class="fab fa-whatsapp"></i> Enviar cotação pública</button>
-    </div>
-    <h3><i class="fas fa-chart-line"></i> Cotações abertas</h3>
-    <div id="quotesBoard"></div>
-  </div>
-
-  <!-- Área Parceiro -->
-  <div id="partnerSection" class="section">
-    <div class="card"><div><i class="fas fa-building"></i> <strong>Parceiro logado:</strong> Auto Peças Box & Sucatas</div><hr>
-    <div><i class="fas fa-tachometer-alt"></i> Gestão de estoque e respostas</div></div>
-    <div class="card"><h3><i class="fas fa-boxes"></i> Meu estoque</h3><div id="inventoryList" class="grid-cards" style="grid-template-columns: 1fr 1fr;"></div>
-    <button id="addInventoryBtn" class="btn-outline"><i class="fas fa-plus"></i> Nova peça/serviço</button></div>
-    <div class="card"><h3><i class="fas fa-hand-holding-usd"></i> Responder pedidos de cotação</h3><div id="partnerQuotesRequests"></div></div>
-  </div>
-</div>
-
-<!-- Modal para adicionar inventário -->
-<div id="inventoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:1000;">
-  <div style="background:#1B1F26; max-width:380px; width:90%; border-radius:32px; padding:1.5rem;">
-    <h3>Adicionar ao estoque</h3>
-    <input type="text" id="invName" placeholder="Nome" style="margin-bottom:12px;">
-    <input type="text" id="invPrice" placeholder="Preço (R$)" style="margin-bottom:12px;">
-    <select id="invCondition"><option value="Nova">Nova</option><option value="Usada">Usada</option><option value="Serviço">Serviço</option></select>
-    <div style="margin-top:20px; display:flex; gap:12px;"><button id="saveInventoryBtn" class="btn-primary">Salvar</button><button id="closeModalBtn" class="btn-outline">Cancelar</button></div>
-  </div>
+<div class="container">
+    <h1>🚗 Auto Box - João Pessoa</h1>
+    <div id="status">Carregando estabelecimentos...</div>
+    <div id="lista"></div>
 </div>
 
 <script>
-  // SUPABASE INIT
-  const SUPABASE_URL = 'https://llmbrimuawiyenxwrptr.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_uMKq-Y7uueGkd0gYt0kJ2Q_w4GT6-qL';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Configuração do Supabase (SOMENTE anon key)
+    const SUPABASE_URL = 'https://llmbrimuawiyenxwrptr.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_uMKq-Y7uueGkd0gYt0kJ2Q_w4GT6-qL';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // ID do parceiro fixo (Auto Peças Box)
-  const PARTNER_SHOP_ID = 99;
-  const PARTNER_SHOP_NAME = "Auto Peças Box & Sucatas";
-
-  // Referências DOM
-  const dirSearch = document.getElementById('dirSearch');
-  const dirTypeFilter = document.getElementById('dirTypeFilter');
-  const directoryList = document.getElementById('directoryList');
-  const compSearch = document.getElementById('compSearch');
-  const comparatorList = document.getElementById('comparatorList');
-  const quotesBoard = document.getElementById('quotesBoard');
-  const inventoryList = document.getElementById('inventoryList');
-  const partnerQuotesRequests = document.getElementById('partnerQuotesRequests');
-
-  // ---------- FUNÇÕES DE RENDER (COM SUPABASE) ----------
-  async function renderDirectory() {
-    let query = supabase.from('establishments').select('*');
-    const searchTerm = dirSearch.value.toLowerCase();
-    const activeType = document.querySelector('#dirTypeFilter .chip.active-chip')?.dataset.type || 'all';
-    if (activeType !== 'all') query = query.eq('type', activeType);
-    let { data, error } = await query;
-    if (error) { console.error(error); return; }
-    if (searchTerm) data = data.filter(est => est.name.toLowerCase().includes(searchTerm) || est.specialties.toLowerCase().includes(searchTerm));
-    directoryList.innerHTML = data.map(est => `
-      <div class="card">
-        <div style="display:flex; justify-content:space-between;"><strong><i class="fas fa-wrench"></i> ${est.name}</strong> <span>${'★'.repeat(Math.floor(est.rating))}${est.rating % 1 ? '½' : ''}</span></div>
-        <div style="font-size:0.8rem; color:#F5A623;">${est.type}</div>
-        <div style="font-size:0.85rem;">${est.specialties}</div>
-        <button class="btn-whatsapp" data-wpp="${est.whatsapp}" data-nome="${est.name}"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-      </div>
-    `).join('');
-    document.querySelectorAll('.btn-whatsapp').forEach(btn => btn.addEventListener('click', (e) => window.open(`https://wa.me/${btn.dataset.wpp}?text=Olá! Vi sua loja no Auto Box.`, '_blank')));
-  }
-
-  async function renderComparator() {
-    let { data, error } = await supabase.from('catalog_items').select('*');
-    if (error) return;
-    const search = compSearch.value.toLowerCase();
-    const activeCond = document.querySelector('#comparatorSection .chip.active-chip')?.dataset.condition || 'all';
-    let filtered = data.filter(item => item.name.toLowerCase().includes(search));
-    if (activeCond !== 'all') filtered = filtered.filter(item => item.condition === activeCond);
-    comparatorList.innerHTML = filtered.map(item => `
-      <div class="card">
-        <div><strong>${item.name}</strong></div>
-        <div class="preco-destaque">R$ ${item.price.toFixed(2)}</div>
-        <div style="font-size:0.75rem;">${item.condition} · ${item.shop}</div>
-        <button class="btn-outline" data-item="${item.name}" data-loja="${item.shop}" style="margin-top:12px;"><i class="fab fa-whatsapp"></i> Pedir orçamento</button>
-      </div>
-    `).join('');
-    document.querySelectorAll('#comparatorList .btn-outline').forEach(btn => btn.addEventListener('click', () => alert(`📞 Entre em contato com ${btn.dataset.loja} pelo WhatsApp para negociar "${btn.dataset.item}".`)));
-  }
-
-  async function renderQuotations() {
-    let { data: quotes, error } = await supabase.from('quotations').select('*').order('created_at', { ascending: false });
-    if (error) return;
-    for (let q of quotes) {
-      let { data: props } = await supabase.from('proposals').select('*').eq('quotation_id', q.id);
-      q.proposals = props || [];
+    async function carregarEstabelecimentos() {
+        const statusDiv = document.getElementById('status');
+        const listaDiv = document.getElementById('lista');
+        
+        try {
+            statusDiv.innerHTML = 'Consultando Supabase...';
+            const { data, error } = await supabase
+                .from('establishments')
+                .select('name, type, specialties, whatsapp')
+                .limit(10);
+            
+            if (error) {
+                throw new Error(`Erro do Supabase: ${error.message} (${error.code})`);
+            }
+            
+            if (!data || data.length === 0) {
+                listaDiv.innerHTML = '<div class="card">Nenhum estabelecimento encontrado.</div>';
+                statusDiv.innerHTML = '✅ Conectado, mas sem dados. Execute o INSERT no SQL Editor.';
+                return;
+            }
+            
+            // Exibir os cards
+            listaDiv.innerHTML = data.map(est => `
+                <div class="card">
+                    <strong>${est.name}</strong> <span style="color:#F5A623;">(${est.type})</span><br>
+                    ${est.specialties || 'Especialidades não informadas'}<br>
+                    <button onclick="window.open('https://wa.me/${est.whatsapp}?text=Olá!', '_blank')" style="margin-top:8px; background:#F5A623; border:none; padding:6px 12px; border-radius:20px;">WhatsApp</button>
+                </div>
+            `).join('');
+            statusDiv.innerHTML = `✅ ${data.length} estabelecimentos carregados com sucesso!`;
+            
+        } catch (err) {
+            console.error(err);
+            statusDiv.innerHTML = `<div class="error">❌ Erro: ${err.message}</div>`;
+            listaDiv.innerHTML = '<div class="error">Falha ao carregar dados. Verifique o console (F12).</div>';
+        }
     }
-    quotesBoard.innerHTML = quotes.map(q => `
-      <div class="card">
-        <div><i class="fas fa-user-circle"></i> <strong>${q.user_name}</strong> · ${q.car_model}</div>
-        <div><i class="fas fa-tools"></i> ${q.description}</div>
-        <div><i class="fab fa-whatsapp"></i> Contato: ${q.phone}</div>
-        <hr><div><strong>Propostas:</strong></div>
-        ${q.proposals.map(p => `<div class="proposta-item">💰 ${p.shop_name}: R$ ${p.price} - ${p.message} (${p.days} dias)</div>`).join('')}
-      </div>
-    `).join('');
-  }
-
-  async function renderPartnerArea() {
-    // Inventário
-    let { data: inventory } = await supabase.from('partner_inventory').select('*').eq('partner_shop_id', PARTNER_SHOP_ID);
-    inventoryList.innerHTML = (inventory || []).map(item => `
-      <div class="card" style="padding:0.8rem;">
-        <div><i class="fas fa-microchip"></i> ${item.name}</div>
-        <div class="preco-destaque" style="font-size:1rem;">R$ ${item.price.toFixed(2)}</div>
-        <div>${item.condition}</div>
-        <button class="btn-outline" data-del="${item.id}" style="margin-top:8px;">Remover</button>
-      </div>
-    `).join('');
-    document.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', async (e) => {
-      await supabase.from('partner_inventory').delete().eq('id', btn.dataset.del);
-      renderPartnerArea();
-    }));
-
-    // Cotações abertas para parceiro responder
-    let { data: quotes } = await supabase.from('quotations').select('*').order('created_at', { ascending: false });
-    partnerQuotesRequests.innerHTML = (quotes || []).map(q => `
-      <div class="card">
-        <div><strong>${q.user_name}</strong> - ${q.car_model}</div>
-        <div>🔧 ${q.description}</div>
-        <div>📞 ${q.phone}</div>
-        <div style="margin-top:12px;">
-          <input type="number" id="priceOffer_${q.id}" placeholder="Seu preço (R$)" style="width:120px; display:inline-block; margin-right:8px;">
-          <input type="text" id="msgOffer_${q.id}" placeholder="obs: prazo/garantia" style="width:160px;">
-          <button class="btn-whatsapp" data-quoteid="${q.id}" style="background:#F5A623; color:black;">Enviar proposta</button>
-        </div>
-      </div>
-    `).join('');
-    for (let q of quotes) {
-      const btn = document.querySelector(`button[data-quoteid="${q.id}"]`);
-      if (btn) btn.addEventListener('click', async () => {
-        const priceInput = document.getElementById(`priceOffer_${q.id}`);
-        const msgInput = document.getElementById(`msgOffer_${q.id}`);
-        const price = parseFloat(priceInput.value);
-        if (isNaN(price)) return alert('Informe um preço válido');
-        await supabase.from('proposals').insert({
-          quotation_id: q.id,
-          shop_name: PARTNER_SHOP_NAME,
-          price: price,
-          message: msgInput.value || "Orçamento via Auto Box",
-          days: 1
-        });
-        alert('Proposta enviada!');
-        priceInput.value = '';
-        if (msgInput) msgInput.value = '';
-        renderQuotations();
-      });
-    }
-  }
-
-  // Criar cotação
-  document.getElementById('createQuoteBtn')?.addEventListener('click', async () => {
-    const name = document.getElementById('quoteName').value;
-    const phone = document.getElementById('quotePhone').value;
-    const car = document.getElementById('quoteCar').value;
-    const desc = document.getElementById('quoteDesc').value;
-    if (!name || !phone || !car || !desc) return alert('Preencha todos os campos');
-    await supabase.from('quotations').insert({ user_name: name, phone, car_model: car, description: desc });
-    alert('Cotação criada! Os parceiros poderão responder.');
-    document.getElementById('quoteName').value = '';
-    document.getElementById('quotePhone').value = '';
-    document.getElementById('quoteCar').value = '';
-    document.getElementById('quoteDesc').value = '';
-    renderQuotations();
-    renderPartnerArea();
-  });
-
-  // Adicionar item ao inventário
-  const modal = document.getElementById('inventoryModal');
-  document.getElementById('addInventoryBtn')?.addEventListener('click', () => modal.style.display = 'flex');
-  document.getElementById('closeModalBtn')?.addEventListener('click', () => modal.style.display = 'none');
-  document.getElementById('saveInventoryBtn')?.addEventListener('click', async () => {
-    const name = document.getElementById('invName').value;
-    const price = parseFloat(document.getElementById('invPrice').value);
-    const condition = document.getElementById('invCondition').value;
-    if (!name || isNaN(price)) return alert('Preencha nome e preço');
-    await supabase.from('partner_inventory').insert({ partner_shop_id: PARTNER_SHOP_ID, name, price, condition });
-    modal.style.display = 'none';
-    document.getElementById('invName').value = '';
-    document.getElementById('invPrice').value = '';
-    renderPartnerArea();
-  });
-
-  // Filtros e eventos
-  dirSearch.addEventListener('input', renderDirectory);
-  document.querySelectorAll('#dirTypeFilter .chip').forEach(chip => chip.addEventListener('click', () => {
-    document.querySelectorAll('#dirTypeFilter .chip').forEach(c => c.classList.remove('active-chip'));
-    chip.classList.add('active-chip');
-    renderDirectory();
-  }));
-  compSearch.addEventListener('input', renderComparator);
-  document.querySelectorAll('#comparatorSection .chip').forEach(chip => chip.addEventListener('click', function() {
-    document.querySelectorAll('#comparatorSection .chip').forEach(c => c.classList.remove('active-chip'));
-    this.classList.add('active-chip');
-    renderComparator();
-  }));
-
-  // Abas
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', async () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const tabId = btn.dataset.tab;
-    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active-section'));
-    document.getElementById(`${tabId}Section`).classList.add('active-section');
-    if (tabId === 'directory') await renderDirectory();
-    if (tabId === 'comparator') await renderComparator();
-    if (tabId === 'quotations') await renderQuotations();
-    if (tabId === 'partner') await renderPartnerArea();
-  }));
-
-  // Carrega dados iniciais
-  renderDirectory();
-  renderComparator();
-  renderQuotations();
-  renderPartnerArea();
+    
+    carregarEstabelecimentos();
 </script>
 </body>
 </html>
