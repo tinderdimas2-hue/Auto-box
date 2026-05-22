@@ -1,70 +1,39 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
+    <title>Teste Supabase Direto</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Box - Teste Funcional</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #0B0D10; color: #EFF1F3; }
-        .card { background: #1B1F26; border-radius: 16px; padding: 15px; margin-bottom: 10px; border-left: 4px solid #F5A623; }
-        .container { max-width: 800px; margin: auto; }
-        .error { color: #ff8888; background: #330000; padding: 10px; border-radius: 8px; }
-        hr { margin: 20px 0; }
-    </style>
 </head>
 <body>
-<div class="container">
-    <h1>🚗 Auto Box - João Pessoa</h1>
-    <div id="status">Carregando estabelecimentos...</div>
-    <div id="lista"></div>
-</div>
+    <h2>Teste de Conexão Direta com Supabase</h2>
+    <pre id="resultado" style="background:#eee; padding:10px;">Aguardando...</pre>
 
-<script>
-    // Configuração do Supabase (SOMENTE anon key)
-    const SUPABASE_URL = 'https://llmbrimuawiyenxwrptr.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_uMKq-Y7uueGkd0gYt0kJ2Q_w4GT6-qL';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <script>
+        const url = 'https://llmbrimuawiyenxwrptr.supabase.co/rest/v1/establishments?select=name';
+        const headers = {
+            'apikey': 'sb_publishable_uMKq-Y7uueGkd0gYt0kJ2Q_w4GT6-qL',
+            'Authorization': 'Bearer sb_publishable_uMKq-Y7uueGkd0gYt0kJ2Q_w4GT6-qL'
+        };
 
-    async function carregarEstabelecimentos() {
-        const statusDiv = document.getElementById('status');
-        const listaDiv = document.getElementById('lista');
-        
-        try {
-            statusDiv.innerHTML = 'Consultando Supabase...';
-            const { data, error } = await supabase
-                .from('establishments')
-                .select('name, type, specialties, whatsapp')
-                .limit(10);
-            
-            if (error) {
-                throw new Error(`Erro do Supabase: ${error.message} (${error.code})`);
-            }
-            
-            if (!data || data.length === 0) {
-                listaDiv.innerHTML = '<div class="card">Nenhum estabelecimento encontrado.</div>';
-                statusDiv.innerHTML = '✅ Conectado, mas sem dados. Execute o INSERT no SQL Editor.';
-                return;
-            }
-            
-            // Exibir os cards
-            listaDiv.innerHTML = data.map(est => `
-                <div class="card">
-                    <strong>${est.name}</strong> <span style="color:#F5A623;">(${est.type})</span><br>
-                    ${est.specialties || 'Especialidades não informadas'}<br>
-                    <button onclick="window.open('https://wa.me/${est.whatsapp}?text=Olá!', '_blank')" style="margin-top:8px; background:#F5A623; border:none; padding:6px 12px; border-radius:20px;">WhatsApp</button>
-                </div>
-            `).join('');
-            statusDiv.innerHTML = `✅ ${data.length} estabelecimentos carregados com sucesso!`;
-            
-        } catch (err) {
-            console.error(err);
-            statusDiv.innerHTML = `<div class="error">❌ Erro: ${err.message}</div>`;
-            listaDiv.innerHTML = '<div class="error">Falha ao carregar dados. Verifique o console (F12).</div>';
-        }
-    }
-    
-    carregarEstabelecimentos();
-</script>
+        const saida = document.getElementById('resultado');
+        saida.innerText = 'Enviando requisição...';
+
+        fetch(url, { headers })
+            .then(response => {
+                saida.innerText = `Status HTTP: ${response.status} ${response.statusText}\n`;
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP ${response.status}: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                saida.innerText += `✅ Sucesso! Dados recebidos:\n${JSON.stringify(data, null, 2)}`;
+            })
+            .catch(err => {
+                saida.innerText += `❌ Erro capturado:\n${err.message}\n\nDetalhes: ${err.stack || 'sem stack'}`;
+            });
+    </script>
 </body>
 </html>
